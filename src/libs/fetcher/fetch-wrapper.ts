@@ -13,12 +13,13 @@ type RequestOptions = RequestInit & Record<string, any>;
 //#region Fetcher
 class Fetcher {
     private __baseUrl: string = '';
+  private __originalRequestError: boolean = false;
 
     constructor(baseUrl?: string) {
         this.__baseUrl = baseUrl || '';
     }
 
-    private async _fetcher(
+    private async _fetcher<T>(
         path: string,
         method: Method,
         body?: Record<string, any> | null,
@@ -56,36 +57,36 @@ class Fetcher {
         }
     }
 
-    async get(path: string, options: RequestOptions = {}) {
-        return this._fetcher(path, Method.GET, null, options);
+    async get<T>(path: string, options: RequestOptions = {}) {
+        return this._fetcher<T>(path, Method.GET, null, options);
     }
 
-    async post(
+    async post<T>(
         path: string,
         body: Record<string, any> | null = null,
         options: RequestOptions = {},
     ) {
-        return this._fetcher(path, Method.POST, body, options);
+        return this._fetcher<T>(path, Method.POST, body, options);
     }
 
-    async put(path: string, body: Record<string, any> | null = null, options: RequestOptions = {}) {
-        return this._fetcher(path, Method.PUT, body, options);
+    async put<T>(path: string, body: Record<string, any> | null = null, options: RequestOptions = {}) {
+        return this._fetcher<T>(path, Method.PUT, body, options);
     }
 
-    async patch(
+    async patch<T>(
         path: string,
         body: Record<string, any> | null = null,
         options: RequestOptions = {},
     ) {
-        return this._fetcher(path, Method.PATCH, body, options);
+        return this._fetcher<T>(path, Method.PATCH, body, options);
     }
 
-    async delete(
+    async delete<T>(
         path: string,
         body: Record<string, any> | null = null,
         options: RequestOptions = {},
     ) {
-        return this._fetcher(path, Method.DELETE, body, options);
+        return this._fetcher<T>(path, Method.DELETE, body, options);
     }
 }
 //#endregion
