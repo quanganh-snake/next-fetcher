@@ -10,15 +10,15 @@ enum Method {
 
 type RequestOptions = RequestInit & Record<string, any>;
 
-//#region FetchWrapper
-class FetchWrapper {
+//#region Fetcher
+class Fetcher {
   private __baseUrl: string = '';
 
   constructor(baseUrl?: string) {
     this.__baseUrl = baseUrl || '';
   }
 
-  private async fetcher(path: string,
+  private async _fetcher(path: string,
     method: Method,
     body?: Record<string, any> | null,
     options?: RequestOptions): Promise<Response & { data?: unknown }> {
@@ -51,25 +51,25 @@ class FetchWrapper {
   }
 
   async get(path: string, options: RequestOptions = {}) {
-    return this.fetcher(path, Method.GET, null, options);
+    return this._fetcher(path, Method.GET, null, options);
   }
 
   async post(path: string, body: Record<string, any> | null = null, options: RequestOptions = {}) {
-    return this.fetcher(path, Method.POST, body, options);
+    return this._fetcher(path, Method.POST, body, options);
   }
 
   async put(path: string, body: Record<string, any> | null = null, options: RequestOptions = {}) {
-    return this.fetcher(path, Method.PUT, body, options);
+    return this._fetcher(path, Method.PUT, body, options);
   }
 
   async patch(path: string, body: Record<string, any> | null = null, options: RequestOptions = {}) {
-    return this.fetcher(path, Method.PATCH, body, options);
+    return this._fetcher(path, Method.PATCH, body, options);
   }
 
   async delete(path: string, body: Record<string, any> | null = null, options: RequestOptions = {}) {
-    return this.fetcher(path, Method.DELETE, body, options);
+    return this._fetcher(path, Method.DELETE, body, options);
   }
 
 }
 //#endregion
-export default FetchWrapper;
+export default Fetcher;
