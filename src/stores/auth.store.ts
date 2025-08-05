@@ -13,6 +13,7 @@ type User = {
 
 type AuthStoreState = {
     isAuth: boolean;
+    isLoading: boolean;
     user: User | null;
     onSetToken: (accessToken: string, refreshToken: string) => void;
     onSetUser: (user: any) => void;
@@ -24,10 +25,18 @@ const useAuthStore = create<AuthStoreState>()(
         (set) => {
             return {
                 isAuth: false,
+                isLoading: false,
                 user: null,
                 onSetToken: async (accessToken: string, refreshToken: string) => {
-                    if (accessToken) {
+                    if (!accessToken || !refreshToken) return;
+                    set((state) => {
+                        return {
+                            isLoading: true,
+                        };
+                    });
+                    try {
                         Cookies.set('accessToken', accessToken);
+                        Cookies.set('refreshToken', refreshToken);
                         const resProfile = await fetch(
                             'https://api.escuelajs.co/api/v1/auth/profile',
                             {
@@ -41,13 +50,24 @@ const useAuthStore = create<AuthStoreState>()(
                             set((state) => {
                                 return {
                                     user: data,
+                                    isAuth: true,
+                                    isLoading: false,
                                 };
                             });
                         }
-                    }
-
-                    if (refreshToken) {
-                        Cookies.set('refreshToken', refreshToken);
+                    } catch (error) {
+                        set((state) => {
+                            return {
+                                isAuth: false,
+                                isLoading: false,
+                            };
+                        });
+                    } finally {
+                        set((state) => {
+                            return {
+                                isLoading: false,
+                            };
+                        });
                     }
                 },
                 onSetUser: (user: any) => {

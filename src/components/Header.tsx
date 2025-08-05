@@ -1,11 +1,13 @@
 'use client';
 
 import useAuthStore from '@/stores/auth.store';
+import clsx from 'clsx';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const Header = () => {
     const router = useRouter();
-    const { user, onRemoveToken } = useAuthStore();
+    const { user, isLoading, onRemoveToken } = useAuthStore();
 
     const handleLogin = async () => {
         await onRemoveToken();
@@ -39,28 +41,35 @@ const Header = () => {
                     <a className="mr-5 hover:text-gray-900">Trang chủ</a>
                     <a className="mr-5 hover:text-gray-900">Giới thiệu</a>
                 </nav>
-                {user ? (
-                    <div className="flex items-center gap-4 border rounded-full overflow-hidden">
-                        <h2 className="flex-1 title-font font-bold items-center text-gray-900 mb-4 md:mb-0 px-2 text-center">
-                            {user.name}
-                        </h2>
+
+                <div
+                    className={clsx(
+                        'flex items-center gap-4',
+                        'border rounded-full overflow-hidden',
+                    )}
+                >
+                    <Link
+                        href={'/profile'}
+                        className="flex-1 whitespace-nowrap title-font font-bold items-center text-gray-900 mb-4 md:mb-0 px-2 text-center hover:text-blue-600"
+                    >
+                        {isLoading ? 'Username' : user ? user.name : null}
+                    </Link>
+                    {user ? (
                         <button
                             onClick={handleLogout}
                             className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded-e-full text-base mt-4 md:mt-0 cursor-pointer"
                         >
                             Đăng xuất
                         </button>
-                    </div>
-                ) : (
-                    <div className="flex items-center gap-4">
+                    ) : (
                         <button
                             onClick={handleLogin}
                             className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
                         >
                             Đăng nhập
                         </button>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </header>
     );

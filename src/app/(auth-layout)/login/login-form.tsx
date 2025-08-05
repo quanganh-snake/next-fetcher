@@ -1,18 +1,20 @@
 'use client';
 
 import Fetcher from '@/libs/fetcher/fetch-wrapper';
+import { fetcherPlatzi } from '@/libs/https/platzi-htpp';
 import useAuthStore from '@/stores/auth.store';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React from 'react';
-const fetcherPlatzi = new Fetcher('https://api.escuelajs.co/api/v1');
 
 const LoginForm = () => {
+    const router = useRouter();
     const { onSetToken } = useAuthStore();
     const [showPassword, setShowPassword] = React.useState(false);
     const [formData, setFormData] = React.useState({
-        email: '',
-        password: '',
+        email: 'john@mail.com',
+        password: 'changeme',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +35,7 @@ const LoginForm = () => {
         if (loginRes.data) {
             const { access_token, refresh_token } = loginRes.data;
             onSetToken(access_token, refresh_token);
+            router.push('/');
         }
     };
 

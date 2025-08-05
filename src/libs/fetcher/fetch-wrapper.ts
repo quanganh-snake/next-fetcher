@@ -1,4 +1,7 @@
 import { normalizePath } from '@/libs/string';
+import { makeRefreshToken } from '../auth';
+import { getCookieValueWithKey } from '../cookie.lib';
+import { isClient } from '@/utils';
 
 enum Method {
     GET = 'GET',
@@ -13,10 +16,15 @@ type RequestOptions = RequestInit & Record<string, any>;
 //#region Fetcher
 class Fetcher {
     private __baseUrl: string = '';
-  private __originalRequestError: boolean = false;
+    private __refreshToken: string = '';
+    private __originalRequestError: boolean = false;
 
     constructor(baseUrl?: string) {
         this.__baseUrl = baseUrl || '';
+    }
+
+    private set refreshToken(token: string) {
+        this.__refreshToken = token;
     }
 
     private async _fetcher<T>(
@@ -43,9 +51,22 @@ class Fetcher {
             `${this.__baseUrl}/${normalizePath(path)}`,
             requestInit,
         );
-        if (!response.ok) {
-            throw new Error(`Failed to fetch resource at ${this.__baseUrl}/${normalizePath(path)}`);
+
+        if (response.status === 401 && this.__refreshToken) {
+            if (isClient()) {
+                const refreshToken = await getCookieValueWithKey('refreshToken');
+                console.log('🚀 ~ Fetcher ~ _fetcher ~ refreshToken:', refreshToken);
+            } else {
+                const refreshToken = await fetch('/api/cookies?key=refreshToken');
+                console.log('first fetch', refreshToken);
+            }
+            // if (!refreshToken) return response;
+
+            // const newToken = await makeRefreshToken(this.__refreshToken);
+            // console.log('🚀 ~ Fetcher ~ _fetcher ~ newToken:', newToken);
+            return response;
         }
+
         try {
             response.data = await response.json();
             return response;
@@ -69,7 +90,11 @@ class Fetcher {
         return this._fetcher<T>(path, Method.POST, body, options);
     }
 
-    async put<T>(path: string, body: Record<string, any> | null = null, options: RequestOptions = {}) {
+    async put<T>(
+        path: string,
+        body: Record<string, any> | null = null,
+        options: RequestOptions = {},
+    ) {
         return this._fetcher<T>(path, Method.PUT, body, options);
     }
 
