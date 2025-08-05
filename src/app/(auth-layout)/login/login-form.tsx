@@ -1,11 +1,11 @@
 'use client';
 
-import FetchWrapper from '@/libs/fetcher/fetch-wrapper';
+import Fetcher from '@/libs/fetcher/fetch-wrapper';
 import useAuthStore from '@/stores/auth.store';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-const fetcherPlatzi = new FetchWrapper('https://api.escuelajs.co/api/v1');
+const fetcherPlatzi = new Fetcher('https://api.escuelajs.co/api/v1');
 
 const LoginForm = () => {
     const { onSetToken } = useAuthStore();
@@ -71,6 +71,7 @@ const LoginForm = () => {
                                     id="email"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="name@company.com"
+                                    defaultValue={'john@mail.com'}
                                     required
                                     value={formData.email}
                                     onChange={handleChange}
@@ -87,6 +88,7 @@ const LoginForm = () => {
                                     type={showPassword ? 'text' : 'password'}
                                     name="password"
                                     id="password"
+                                    defaultValue={'changeme'}
                                     placeholder="••••••••"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required

@@ -24,7 +24,7 @@ class Fetcher {
         method: Method,
         body?: Record<string, any> | null,
         options?: RequestOptions,
-    ): Promise<Response & { data?: unknown }> {
+    ): Promise<Response & { data?: T }> {
         const { headers, ...restOptions } = options || {};
         const requestInit: RequestOptions = {
             method,
