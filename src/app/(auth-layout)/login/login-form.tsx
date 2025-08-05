@@ -1,10 +1,14 @@
 'use client';
 
+import FetchWrapper from '@/libs/fetcher/fetch-wrapper';
+import useAuthStore from '@/stores/auth.store';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+const fetcherPlatzi = new FetchWrapper('https://api.escuelajs.co/api/v1');
 
 const LoginForm = () => {
+    const { onSetToken } = useAuthStore();
     const [showPassword, setShowPassword] = React.useState(false);
     const [formData, setFormData] = React.useState({
         email: '',
@@ -19,9 +23,17 @@ const LoginForm = () => {
         });
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
+
+        const loginRes = await fetcherPlatzi.post<{
+            access_token: string;
+            refresh_token: string;
+        }>('/auth/login', formData);
+        if (loginRes.data) {
+            const { access_token, refresh_token } = loginRes.data;
+            onSetToken(access_token, refresh_token);
+        }
     };
 
     return (

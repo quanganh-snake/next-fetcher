@@ -1,11 +1,19 @@
 'use client';
 
+import useAuthStore from '@/stores/auth.store';
 import { useRouter } from 'next/navigation';
 
 const Header = () => {
     const router = useRouter();
+    const { user, onRemoveToken } = useAuthStore();
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
+        await onRemoveToken();
+        router.push('/login');
+    };
+
+    const handleLogout = async () => {
+        await onRemoveToken();
         router.push('/login');
     };
 
@@ -31,12 +39,15 @@ const Header = () => {
                     <a className="mr-5 hover:text-gray-900">Trang chủ</a>
                     <a className="mr-5 hover:text-gray-900">Giới thiệu</a>
                 </nav>
-                {true ? (
+                {user ? (
                     <div className="flex items-center gap-4 border rounded-full overflow-hidden">
                         <h2 className="flex-1 title-font font-bold items-center text-gray-900 mb-4 md:mb-0 px-2 text-center">
-                            ADMIN
+                            {user.name}
                         </h2>
-                        <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded-e-full text-base mt-4 md:mt-0 cursor-pointer">
+                        <button
+                            onClick={handleLogout}
+                            className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded-e-full text-base mt-4 md:mt-0 cursor-pointer"
+                        >
                             Đăng xuất
                         </button>
                     </div>
